@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roman Numeral Converter</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      padding: 50px;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      margin: auto;
+      color: #333;
+    }
+    h2 {
+      color: #1e3c72;
+    }
+    input {
+      padding: 10px;
+      margin: 10px 0;
+      width: 80%;
+      font-size: 16px;
+      border: 2px solid #1e3c72;
+      border-radius: 5px;
+      text-align: center;
+    }
+    button {
+      cursor: pointer;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      width: 85%;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #result {
+      font-size: 18px;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Roman Numeral Converter</h2>
+  <input type="text" id="input" placeholder="Enter a number or Roman numeral">
+  <button onclick="convert()">Convert</button>
+  <p id="result"></p>
+</div>
+<script src="converter.js"></script>
+<script>
+  function convert() {
+    let input = document.getElementById("input").value.trim();
+    let result = isNaN(input)
+      ? convertRomanToNumber(input.toUpperCase())
+      : convertNumberToRoman(parseInt(input));
+    document.getElementById("result").innerText = result ? `Result: ${result}` : "Invalid Input";
+  }
+</script>
+</body>
+</html>
