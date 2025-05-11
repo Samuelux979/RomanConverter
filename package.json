@@ -1,15 +1,13 @@
 {
   "name": "roman-numeral-converter",
   "version": "1.0.0",
-  "description": "A simple Roman numeral converter",
+  "description": "Convert numbers to Roman numerals and vice versa.",
   "scripts": {
-    "lint": "eslint .",
-    "test": "jest",
-    "build": "echo 'No build needed'",
-    "deploy": "echo 'Handled by GitHub Pages'"
+    "lint": "eslint . --ext .js",
+    "test": "echo \"Tests run in browser via test.html\"",
+    "build": "mkdir -p dist && cp index.html test.html test.js dist/"
   },
   "devDependencies": {
-    "eslint": "^8.0.0",
-    "jest": "^29.0.0"
+    "eslint": "^8.57.0"
   }
 }
