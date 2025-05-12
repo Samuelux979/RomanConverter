@@ -1,37 +1,62 @@
-name: CI Pipeline
+name: Roman Converter CI/CD
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  ci:
+  lint:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
+      - name: Run HTMLHint
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '18'
+      - run: npm install -g htmlhint
+      - run: htmlhint index.html
 
-      - name: Install dependencies
-        run: npm install
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Lint
-        run: npm run lint
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-      - name: Test
+      - name: Launch test server
         run: |
-          echo "Running tests..."
-          node_modules/.bin/mocha-headless-chrome -f test.html --args no-sandbox
+          npm install -g http-server
+          http-server -p 8080 &
 
-      - name: Build
-        run: echo "🔨 Build step (replace this with real build if needed)"
+      - name: Run Tests in headless browser
+        uses: cypress-io/github-action@v6
+        with:
+          start: http-server -p 8080
+          wait-on: 'http://localhost:8080/test.html'
+          browser: chrome
 
-      - name: Deploy
-        run: echo "🚀 Deploy step (replace this with real deploy if needed)"
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
