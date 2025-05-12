@@ -1,43 +1,44 @@
-name: cd-pipeline
 
+name: Roman Converter CI/CD
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 on:
   push:
     branches:
       - main
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 jobs:
-  deploy:
+  cd-pipeline:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Lint HTML files
-        uses: chabad360/htmlproofer@v1.0.5
-        with:
-          directory: .
-        continue-on-error: true  # evita que el pipeline falle por errores de lint
-
-      - name: Run tests in browser
-        run: |
-          echo "Testing using headless browser is not supported natively here."
-          echo "You can test manually at test.html"
-        continue-on-error: true
-
-      - name: Build (no-op)
-        run: echo "No build step required for static HTML project."
-
-      - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: .
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+    - name: Lint
+      run: |
+        echo "Installing HTMLHint..."
+        sudo npm install -g htmlhint
+        htmlhint index.html test.html --config .htmlhintrc
+    - name: Test
+      run: |
+        echo "Installing Ruby and html-proofer..."
+        sudo apt-get update
+        sudo apt-get install -y ruby-full build-essential
+        sudo gem install html-proofer
+        echo "Running html-proofer..."
+        htmlproofer . --disable-external
+    - name: Build
+      run: |
+        echo "Running static build step..."
+        mkdir -p dist
+        cp index.html test.html tests.js dist/
+        echo "Build complete. Files copied to ./dist"
+    - name: Deploy
+      uses: actions/deploy-pages@v2
+      with:
+        artifact_name: github-pages
+        path: ./dist
 
