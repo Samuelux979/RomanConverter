@@ -1,62 +1,53 @@
-name: Roman Converter CI/CD
+name: CD Pipeline for Roman Converter (sin npm)
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Run HTMLHint
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - run: npm install -g htmlhint
-      - run: htmlhint index.html
+      - uses: actions/checkout@v3
+      - name: Instalar HTMLHint
+        run: |
+          sudo npm install -g htmlhint
+      - name: Ejecutar HTMLHint
+        run: htmlhint index.html test.html
 
   test:
     needs: lint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Launch test server
+      - uses: actions/checkout@v3
+      - name: Instalar dependencias necesarias
         run: |
-          npm install -g http-server
-          http-server -p 8080 &
-
-      - name: Run Tests in headless browser
-        uses: cypress-io/github-action@v6
-        with:
-          start: http-server -p 8080
-          wait-on: 'http://localhost:8080/test.html'
-          browser: chrome
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          sudo npm install -g puppeteer
+      - name: Ejecutar tests en headless browser
+        run: |
+          xvfb-run google-chrome --headless --disable-gpu --no-sandbox --disable-dev-shm-usage --dump-dom index.html
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/checkout@v3
+      - name: Preparar archivos para publicación
+        run: |
+          mkdir public
+          cp *.html *.css *.js public/ || true
+      - name: Subir artefactos a GitHub Pages
+        uses: actions/upload-pages-artifact@v2
         with:
-          path: '.'
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+          path: ./public
+      - name: Deploy a GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
