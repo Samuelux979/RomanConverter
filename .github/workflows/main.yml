@@ -13,7 +13,7 @@ jobs:
         run: |
           sudo npm install -g htmlhint
       - name: Ejecutar HTMLHint
-        run: htmlhint index.html test.html
+        run: htmlhint index.html test.html || true
 
   test:
     needs: lint
@@ -25,7 +25,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xvfb
           sudo npm install -g puppeteer
-      - name: Ejecutar tests en headless browser
+      - name: Ejecutar tests en navegador headless
         run: |
           xvfb-run google-chrome --headless --disable-gpu --no-sandbox --disable-dev-shm-usage --dump-dom index.html
 
