@@ -30,27 +30,30 @@ jobs:
       - name: Test con Chromium
         run: chromium-browser --headless --no-sandbox --disable-gpu --dump-dom index.html
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Crear carpeta de despliegue
-        run: |
-          mkdir public
-          cp *.html *.js *.css public/
-      - name: Subir artefactos
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: public
-      - name: Desplegar en GitHub Pages
-        id: deploy
-        uses: actions/deploy-pages@v2
+ deploy:
+  needs: test
+  runs-on: ubuntu-latest
+  permissions:
+    pages: write
+    id-token: write
+  environment:
+    name: github-pages
+    url: ${{ steps.deploy.outputs.page_url }}
+  steps:
+    - name: Checkout del repositorio
+      uses: actions/checkout@v3
 
-        uses: actions/deploy-pages@v2
+    - name: Crear carpeta de despliegue
+      run: |
+        mkdir public
+        cp *.html *.js *.css public/
+
+    - name: Subir artefactos a GitHub Pages
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: public
+
+    - name: Desplegar en GitHub Pages
+      id: deploy
+      uses: actions/deploy-pages@v2
+
