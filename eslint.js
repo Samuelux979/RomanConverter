@@ -1,16 +1,11 @@
 {
-  "env": {
-    "browser": true,
-    "es2021": true
-  },
-  "extends": "eslint:recommended",
-  "parserOptions": {
-    "ecmaVersion": 12,
-    "sourceType": "script"
-  },
-  "rules": {
-    "no-unused-vars": "warn",
-    "no-undef": "error",
-    "semi": ["error", "always"]
-  }
+  "tagname-lowercase": true,
+  "attr-lowercase": true,
+  "attr-value-double-quotes": true,
+  "doctype-first": false,
+  "tag-pair": true,
+  "spec-char-escape": true,
+  "id-unique": true,
+  "head-script-disabled": false,
+  "style-disabled": false
 }
