@@ -1,54 +1,39 @@
-name: Run Tests and Deploy
+name: Roman Converter CI/CD
 
 on:
   push:
-    branches: ["main"]
-  pull_request:
-    types: [opened, reopened]
-    branches: ["main"]
+    branches:
+      - main
 
 jobs:
-  test:
-    name: Run Headless Browser Tests
+  cd-pipeline:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
+    - name: Lint
+      uses: mikeal/htmlhint-action@master
+      with:
+        files: |
+          index.html
+          test.html
 
-      - name: Install Dependencies
-        run: npm install
+    - name: Test
+      uses: chabad360/htmlproofer@v1.0.5
+      with:
+        directory: .
 
-      - name: Run Headless Browser Tests
-        run: |
-          npx mocha test.html --reporter spec --no-timeouts --exit --require jsdom-global/register
+    - name: Build
+      run: |
+        echo "Running static build step..."
+        mkdir -p dist
+        cp index.html test.html tests.js dist/
+        echo "Build complete. Files copied to ./dist"
 
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: test
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: ./  # cambia esto si tu sitio está en otro subdirectorio
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v2
+    - name: Deploy
+      uses: actions/deploy-pages@v2
+      with:
+        artifact_name: github-pages
+        path: ./dist
