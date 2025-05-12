@@ -20,9 +20,13 @@ jobs:
         htmlhint index.html test.html --config .htmlhintrc
 
     - name: Test
-      uses: chabad360/htmlproofer@v1.0.5
-      with:
-        directory: .
+      run: |
+        echo "Installing Ruby and html-proofer..."
+        sudo apt-get update
+        sudo apt-get install -y ruby-full build-essential
+        sudo gem install html-proofer
+        echo "Running html-proofer..."
+        htmlproofer . --disable-external
 
     - name: Build
       run: |
