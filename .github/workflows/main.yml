@@ -1,7 +1,10 @@
-name: CD Pipeline for Roman Converter (sin npm)
+name: CD Pipeline Roman Converter
 
 on:
   push:
+    branches: [main]
+  pull_request:
+    types: [opened, reopened]
     branches: [main]
 
 jobs:
@@ -10,24 +13,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Instalar HTMLHint
-        run: |
-          sudo npm install -g htmlhint
-      - name: Ejecutar HTMLHint
-        run: htmlhint index.html test.html || true
+        run: sudo npm install -g htmlhint
+      - name: Lint HTML
+        run: htmlhint *.html || true
 
   test:
     needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Instalar dependencias necesarias
+      - name: Instalar Puppeteer y Chrome
         run: |
           sudo apt-get update
-          sudo apt-get install -y xvfb
+          sudo apt-get install -y chromium-browser
           sudo npm install -g puppeteer
-      - name: Ejecutar tests en navegador headless
-        run: |
-          xvfb-run google-chrome --headless --disable-gpu --no-sandbox --disable-dev-shm-usage --dump-dom index.html
+      - name: Test con Chromium
+        run: chromium-browser --headless --no-sandbox --disable-gpu --dump-dom index.html
 
   deploy:
     needs: test
@@ -37,17 +38,19 @@ jobs:
       id-token: write
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v3
-      - name: Preparar archivos para publicación
+      - name: Crear carpeta de despliegue
         run: |
           mkdir public
-          cp *.html *.css *.js public/ || true
-      - name: Subir artefactos a GitHub Pages
+          cp *.html *.js *.css public/
+      - name: Subir artefactos
         uses: actions/upload-pages-artifact@v2
         with:
-          path: ./public
-      - name: Deploy a GitHub Pages
-        id: deployment
+          path: public
+      - name: Desplegar en GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v2
+
         uses: actions/deploy-pages@v2
