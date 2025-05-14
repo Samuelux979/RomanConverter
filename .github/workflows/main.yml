@@ -1,4 +1,3 @@
-
 name: Roman Converter CI/CD
 
 permissions:
@@ -12,20 +11,28 @@ on:
       - main
 
 jobs:
-  cd-pipeline:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Lint
+      - name: Run HTMLHint
         run: |
           echo "Installing HTMLHint..."
           sudo npm install -g htmlhint
           htmlhint index.html test.html --config .htmlhintrc
 
-      - name: Test
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run html-proofer
         run: |
           echo "Installing Ruby and html-proofer..."
           sudo apt-get update
@@ -34,7 +41,15 @@ jobs:
           echo "Running html-proofer..."
           htmlproofer . --disable-external
 
-      - name: Build
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build project
         run: |
           echo "Running static build step..."
           mkdir -p dist
@@ -47,11 +62,12 @@ jobs:
           path: ./dist
 
   deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: cd-pipeline
     steps:
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v2
