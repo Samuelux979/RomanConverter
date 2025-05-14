@@ -36,8 +36,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ruby-full build-essential
-          gem install --user-install html-proofer
-
+          gem install html-proofer --no-document
+          
       - name: Run html-proofer
         run: |
           echo "Running html-proofer..."
