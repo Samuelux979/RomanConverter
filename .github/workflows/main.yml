@@ -55,7 +55,7 @@ jobs:
         run: |
           mkdir -p dist
           cp index.html test.html tests.js dist/
-          echo "dummy" > dist/dummy.txt  # para asegurar que el directorio no esté vacío
+          echo "dummy" > dist/dummy.txt  # asegura que dist no esté vacío
 
       - name: Dummy artifact upload to preload action
         uses: actions/upload-artifact@v3
