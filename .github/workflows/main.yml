@@ -25,22 +25,22 @@ jobs:
           sudo npm install -g htmlhint
           htmlhint index.html test.html || true
 
-  test:
+    test:
     name: Test
     runs-on: ubuntu-latest
     needs: lint
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Run html-proofer
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Run tests
         run: |
-          echo "Installing Ruby and html-proofer..."
-          sudo apt-get update
-          sudo apt-get install -y ruby-full build-essential
-          sudo gem install html-proofer
-          echo "Running html-proofer..."
-          htmlproofer . --disable-external || true
+          node tests-node.js
 
   build:
     name: Build
