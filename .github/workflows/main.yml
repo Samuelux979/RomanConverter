@@ -41,36 +41,36 @@ jobs:
           echo "Running html-proofer..."
           htmlproofer . --disable-external
 
- build:
-  name: Build
-  runs-on: ubuntu-latest
-  needs: test
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Build project
-      run: |
-        echo "Running static build step..."
-        mkdir -p dist
-        cp index.html test.html tests.js dist/
-        echo "Build complete. Files copied to ./dist"
+      - name: Build project
+        run: |
+          echo "Running static build step..."
+          mkdir -p dist
+          cp index.html test.html tests.js dist/
+          echo "Build complete. Files copied to ./dist"
 
-    - name: Dummy file to workaround GitHub Actions bug
-      run: |
-        mkdir -p dist
-        touch dist/.dummy
+      - name: Dummy file to workaround GitHub Actions bug
+        run: |
+          mkdir -p dist
+          touch dist/.dummy
 
-    - name: Workaround: preload upload-artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: dummy
-        path: ./dist/.dummy
+      - name: Workaround: preload upload-artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dummy
+          path: ./dist/.dummy
 
-    - name: Upload artifact for GitHub Pages
-      uses: actions/upload-pages-artifact@v1
-      with:
-        path: ./dist
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./dist
 
   deploy:
     name: Deploy
