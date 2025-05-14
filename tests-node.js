@@ -63,4 +63,4 @@ assertEquals(convertNumberToRoman(8/3), "Error: Enter a number between 1 and 399
 assertEquals(convertRomanToNumber("XXXXII"), "Error: Invalid Roman numeral.", "Convert XXXXII to Number");
 assertEquals(convertRomanToNumber("IVXX"), "Error: Invalid Roman numeral.", "Convert IVXX to Number");
 assertEquals(convertRomanToNumber("35X1C"), "Error: Invalid Roman numeral.", "Convert 35X1C to Number");
-assertEquals(convertRomanToNumber("XII"), "Error: Invalid Roman numeral.", "Convert XII to Number");
+
