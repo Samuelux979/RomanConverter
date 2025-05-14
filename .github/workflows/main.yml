@@ -18,10 +18,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Run HTMLHint
+      - name: Install HTMLHint and run lint
         run: |
           echo "Installing HTMLHint..."
-          sudo npm install -g htmlhint
+          npm install -g htmlhint
           htmlhint index.html test.html --config .htmlhintrc
 
   test:
@@ -32,12 +32,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Run html-proofer
+      - name: Install Ruby and html-proofer
         run: |
-          echo "Installing Ruby and html-proofer..."
           sudo apt-get update
           sudo apt-get install -y ruby-full build-essential
-          sudo gem install html-proofer
+          gem install html-proofer
+
+      - name: Run html-proofer
+        run: |
           echo "Running html-proofer..."
           htmlproofer . --disable-external
 
@@ -51,13 +53,19 @@ jobs:
 
       - name: Build project
         run: |
-          echo "Running static build step..."
           mkdir -p dist
           cp index.html test.html tests.js dist/
-          echo "Build complete. Files copied to ./dist"
+          echo "dummy" > dist/dummy.txt  # para asegurar que el directorio no esté vacío
+
+      - name: Dummy artifact upload to preload action
+        uses: actions/upload-artifact@v3
+        with:
+          name: preload
+          path: dist/dummy.txt
+        continue-on-error: true
 
       - name: Upload artifact for GitHub Pages
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: ./dist
 
@@ -70,7 +78,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Setup GitHub Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v3
 
       - name: Deploy to GitHub Pages
         id: deployment
