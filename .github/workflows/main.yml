@@ -56,17 +56,6 @@ jobs:
           cp index.html test.html tests.js dist/
           echo "Build complete. Files copied to ./dist"
 
-      - name: Dummy file to workaround GitHub Actions bug
-        run: |
-          mkdir -p dist
-          touch dist/.dummy
-
-      - name: Workaround: preload upload-artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: dummy
-          path: ./dist/.dummy
-
       - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v1
         with:
@@ -78,6 +67,7 @@ jobs:
     needs: build
     environment:
       name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v2
