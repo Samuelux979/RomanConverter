@@ -78,7 +78,6 @@ jobs:
     needs: build
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v2
