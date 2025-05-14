@@ -1,7 +1,7 @@
 name: Roman Converter CI/CD
 
 permissions:
-  contents: read
+  contents: write  # Cambiado a write para permitir acceso de escritura al repositorio
   pages: write
   id-token: write
 
@@ -41,13 +41,10 @@ jobs:
           echo "Running html-proofer..."
           htmlproofer . --disable-external
 
-  build-and-deploy:
-    name: Build and Deploy
+  build:
+    name: Build
     runs-on: ubuntu-latest
     needs: test
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -55,19 +52,63 @@ jobs:
       - name: Build project
         run: |
           echo "Running static build step..."
-          mkdir -p dist
-          cp index.html test.html tests.js dist/
-          echo "Build complete. Files copied to ./dist"
+          mkdir -p build
+          cp index.html test.html tests.js build/
+          echo "Build complete. Files copied to ./build"
       
-      # Uso directo de la acción de GitHub Pages
-      - name: Setup Pages
-        uses: actions/configure-pages@v1
-      
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+      # En lugar de usar acciones, creamos un archivo temporal que el job de deploy puede obtener
+      - name: Save build artifacts
+        run: |
+          # Crear una rama temporal para transferir archivos entre jobs
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git checkout -b temp-build-branch
+          
+          # Copiar los archivos construidos
+          mkdir -p _site
+          cp -R build/* _site/
+          
+          # Añadir y confirmar los archivos
+          git add _site
+          git commit -m "Build artifacts"
+          
+          # Empujar a la rama temporal
+          git push -f origin temp-build-branch
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout build artifacts
+        uses: actions/checkout@v3
         with:
-          path: ./dist
+          ref: temp-build-branch
+          path: .
       
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        run: |
+          # Configurar el despliegue manual a GitHub Pages
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          
+          # Crear una nueva rama gh-pages o usar la existente
+          git checkout -B gh-pages
+          
+          # Eliminar todo excepto los archivos en _site
+          find . -mindepth 1 -maxdepth 1 ! -name '_site' ! -name '.git' -exec rm -rf {} \;
+          
+          # Mover los archivos de _site a la raíz
+          mv _site/* .
+          rm -rf _site
+          
+          # Añadir, confirmar y empujar
+          git add .
+          git commit -m "Deploy to GitHub Pages"
+          git push -f origin gh-pages
+          
+          echo "::set-output name=page_url::https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
