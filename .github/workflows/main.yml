@@ -1,5 +1,4 @@
-
-  name: CD Roman Converter
+name: CD Roman Converter
 
 on:
   push:
