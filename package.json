@@ -1,12 +1,9 @@
 {
-  "name": "roman-converter",
-  "version": "1.0.0",
-  "scripts": {
-    "lint": "htmlhint index.html test.html",
-    "test": "node tests-runner.js"
-  },
   "devDependencies": {
-    "htmlhint": "^1.1.5",
-    "jsdom": "^23.1.0"
+    "chai": "^5.2.0",
+    "eslint": "^9.26.0",
+    "mocha": "^11.2.2",
+    "mocha-headless-chrome": "^4.0.0"
   }
 }
+
