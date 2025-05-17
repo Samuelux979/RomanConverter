@@ -1,20 +1,16 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true,
     node: true,
+    es2021: true,
   },
   extends: 'eslint:recommended',
-  parserOptions: {
-    ecmaVersion: 12,
-    sourceType: 'module',
-  },
   rules: {
     'no-cond-assign': ['error', 'always'],
-    'indent': ['error', 2],
+    indent: ['error', 2],
     'linebreak-style': ['error', 'unix'],
-    'quotes': ['error', 'single'],
+    quotes: ['error', 'single'],
     'no-unused-vars': 'off',
-    'semi': ['error', 'always'],
+    semi: ['error', 'always'],
   },
 };
