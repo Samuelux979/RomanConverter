@@ -2,10 +2,9 @@ export default [
   {
     languageOptions: {
       globals: {
-        // Ejemplo: si usas 'window' o 'document' globalmente, añade aquí:
-        window: "readonly",
-        document: "readonly"
-      },
+        window: 'readonly',
+        document: 'readonly'
+      }
     },
     rules: {
       'no-cond-assign': ['error', 'always'],
@@ -13,7 +12,7 @@ export default [
       'linebreak-style': ['error', 'unix'],
       quotes: ['error', 'single'],
       'no-unused-vars': 'off',
-      semi: ['error', 'always'],
-    },
-  },
+      semi: ['error', 'always']
+    }
+  }
 ];
