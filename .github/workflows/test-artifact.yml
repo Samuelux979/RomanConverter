@@ -6,9 +6,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@latest
       - run: echo "Hello"
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@latest
         with:
           name: test-artifact
           path: README.md
