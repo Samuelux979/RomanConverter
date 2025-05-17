@@ -1,6 +1,7 @@
 {
   "name": "roman-converter",
   "version": "1.0.0",
+  "type": "module",
   "description": "Roman numeral converter project",
   "scripts": {
     "lint": "eslint .",
