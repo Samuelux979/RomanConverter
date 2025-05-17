@@ -1,0 +1,14 @@
+name: Test Actions Download
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "Hello"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test-artifact
+          path: README.md
