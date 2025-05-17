@@ -5,7 +5,7 @@
   "description": "Roman numeral converter project",
   "scripts": {
     "lint": "eslint .",
-    "test": "mocha-headless-chrome -f test.html --args no-sandbox"
+    "test": "node tests-node.js"
   },
   "devDependencies": {
     "chai": "^5.2.0",
