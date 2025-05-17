@@ -46,7 +46,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: mkdir dist
-      - run: cp index.html script.js style.css dist/
+      - run: cp index.html dist/
       - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
