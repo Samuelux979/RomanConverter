@@ -75,6 +75,15 @@
     let input = document.getElementById("input").value.trim();
     let result = getConversionResult(input);
     document.getElementById("result").innerText = result ? `Result: ${result}` : "Invalid Input";
+
+    // Enviar evento a Google Analytics si la conversión fue exitosa
+    if (result && !result.startsWith("Error")) {
+      gtag('event', 'convert_number', {
+        'event_category': 'Conversion',
+        'event_label': input,
+        'value': 1
+      });
+    }
   }
 
   function getConversionResult(input) {
