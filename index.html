@@ -72,19 +72,21 @@
 </div>
 <script>
   function convert() {
-    let input = document.getElementById("input").value.trim();
-    let result = getConversionResult(input);
-    document.getElementById("result").innerText = result ? `Result: ${result}` : "Invalid Input";
+  let input = document.getElementById("input").value.trim();
+  let result = getConversionResult(input);
+  document.getElementById("result").innerText = result ? `Result: ${result}` : "Invalid Input";
 
-    // Enviar evento a Google Analytics si la conversión fue exitosa
-    if (result && !result.startsWith("Error")) {
-      gtag('event', 'convert_number', {
-        'event_category': 'Conversion',
-        'event_label': input,
-        'value': 1
-      });
-    }
+  if (result && !result.startsWith("Error")) {
+    const isNumeric = !isNaN(input);
+    gtag('event', 'convert_number', {
+      'event_category': 'Conversion',
+      'event_label': input,
+      'conversion_type': isNumeric ? 'NumberToRoman' : 'RomanToNumber',
+      'value': 1
+    });
   }
+}
+
 
   function getConversionResult(input) {
     if (!isNaN(input)) {
